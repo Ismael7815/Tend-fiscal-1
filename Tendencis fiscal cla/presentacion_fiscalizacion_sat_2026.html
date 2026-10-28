@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Maestro de Fiscalización y Reforma Fiscal 2026 · SAT — Guía Ejecutiva para Contadores</title>
+<style>
+/* ============================================================
+   PALETA INSTITUCIONAL — azul (autoridad) · naranja (plazos) ·
+   morado (IA / 2027). Sin semáforo verde/amarillo/rojo.
+   ============================================================ */
+:root{
+  --ink:#0d1b2a;            /* texto principal / navy profundo */
+  --ink-soft:#33465c;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --paper:#f5f7fa;
+  --white:#ffffff;
+
+  --azul:#1667d6;          /* autoridad / tecnología */
+  --azul-d:#0b4aa2;
+  --azul-soft:#e8f0fd;
+  --teal:#0e7490;
+  --teal-soft:#e2f3f6;
+
+  --naranja:#e8731c;       /* plazos / atención */
+  --naranja-d:#c25a0f;
+  --naranja-soft:#fdeede;
+
+  --morado:#6d28d9;        /* IA / futuro / 2027 */
+  --morado-d:#55209f;
+  --morado-soft:#f0e9fc;
+
+  --crimson:#b01030;       /* sólo consecuencia penal/definitiva */
+  --crimson-soft:#fbe7eb;
+
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 18px 40px -22px rgba(13,27,42,.45);
+  --shadow-sm:0 6px 18px -10px rgba(13,27,42,.35);
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+
+/* ============================================================
+   ESTRUCTURA DEL DECK
+   ============================================================ */
+.deck{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* barra de progreso superior */
+.progress{height:4px;background:transparent;flex:0 0 auto;z-index:40}
+.progress__bar{height:100%;width:0;background:linear-gradient(90deg,var(--azul),var(--morado));transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* zona de diapositivas */
+.stage{position:relative;flex:1 1 auto;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  padding:clamp(1.5rem,4vh,3rem) clamp(1.5rem,6vw,5.5rem);
+  overflow-y:auto;
+  opacity:0;visibility:hidden;
+  transform:translateY(14px);
+  transition:opacity .45s ease,transform .45s ease,visibility .45s;
+}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide__inner{max-width:1200px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center}
+
+/* ============================================================
+   BARRA DE NAVEGACIÓN INFERIOR
+   ============================================================ */
+.nav{
+  flex:0 0 auto;display:flex;align-items:center;gap:1rem;
+  padding:.65rem clamp(1rem,4vw,2.5rem);
+  background:var(--white);border-top:1px solid var(--line);z-index:40;
+}
+.nav__brand{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:.82rem;color:var(--ink);letter-spacing:.2px}
+.nav__brand .mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--azul),var(--morado));display:grid;place-items:center;color:#fff;font-size:.7rem;font-weight:900}
+.nav__credit{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.6px;padding-left:.85rem;margin-left:.3rem;border-left:1px solid var(--line);white-space:nowrap}
+@media(max-width:760px){.nav__credit{display:none}}
+.nav__spacer{flex:1}
+.nav__menu{display:flex;gap:.25rem;flex-wrap:wrap;justify-content:center;max-width:46vw}
+.nav__dot{width:9px;height:9px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:all .25s;position:relative}
+.nav__dot:hover{background:var(--azul);transform:scale(1.3)}
+.nav__dot.on{background:var(--azul);width:22px;border-radius:5px}
+.nav__count{font-variant-numeric:tabular-nums;font-weight:700;font-size:.8rem;color:var(--muted);min-width:52px;text-align:center}
+.nav__btn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--line);
+  background:var(--white);color:var(--ink);cursor:pointer;font-size:1.1rem;
+  display:grid;place-items:center;transition:all .2s;flex:0 0 auto;
+}
+.nav__btn:hover{background:var(--azul);color:#fff;border-color:var(--azul)}
+.nav__btn:disabled{opacity:.35;cursor:not-allowed;background:var(--white);color:var(--ink);border-color:var(--line)}
+
+/* ============================================================
+   TIPOGRAFÍA Y BLOQUES DE ENCABEZADO
+   ============================================================ */
+.kicker{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;color:var(--azul);margin-bottom:.75rem}
+.kicker::before{content:"";width:26px;height:2px;background:currentColor;border-radius:2px}
+.k-naranja{color:var(--naranja)} .k-morado{color:var(--morado)} .k-teal{color:var(--teal)} .k-crimson{color:var(--crimson)}
+h2.title{font-size:clamp(1.6rem,3.6vw,2.6rem);font-weight:800;line-height:1.1;letter-spacing:-.5px;margin-bottom:.6rem}
+.lead{font-size:clamp(1rem,1.4vw,1.12rem);color:var(--ink-soft);max-width:72ch;margin-bottom:1.6rem}
+.section-head{margin-bottom:1.5rem}
+.eyebrow-num{font-size:.78rem;font-weight:800;color:var(--muted);letter-spacing:1px}
+
+/* ============================================================
+   REJILLAS Y TARJETAS
+   ============================================================ */
+.grid{display:grid;gap:1.1rem}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:860px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem 1.35rem;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.card--accent{border-top:4px solid var(--azul)}
+.card--naranja{border-top:4px solid var(--naranja)} .card--morado{border-top:4px solid var(--morado)}
+.card--teal{border-top:4px solid var(--teal)} .card--crimson{border-top:4px solid var(--crimson)}
+.card h3{font-size:1.02rem;font-weight:800;margin-bottom:.5rem;display:flex;align-items:center;gap:.55rem}
+.card p,.card li{font-size:.9rem;color:var(--ink-soft)}
+.card .ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:1rem;flex:0 0 auto;background:var(--azul-soft);color:var(--azul)}
+.ico.n{background:var(--naranja-soft);color:var(--naranja-d)} .ico.m{background:var(--morado-soft);color:var(--morado-d)}
+.ico.t{background:var(--teal-soft);color:var(--teal)} .ico.c{background:var(--crimson-soft);color:var(--crimson)}
+
+ul.ticks{list-style:none;display:flex;flex-direction:column;gap:.45rem;margin-top:.3rem}
+ul.ticks li{position:relative;padding-left:1.4rem;font-size:.88rem;color:var(--ink-soft)}
+ul.ticks li::before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;border-radius:2px;background:var(--azul)}
+ul.ticks.n li::before{background:var(--naranja)} ul.ticks.m li::before{background:var(--morado)} ul.ticks.t li::before{background:var(--teal)} ul.ticks.c li::before{background:var(--crimson)}
+
+/* pastillas */
+.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.22rem .6rem;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.3px}
+.pill-azul{background:var(--azul-soft);color:var(--azul-d)} .pill-naranja{background:var(--naranja-soft);color:var(--naranja-d)}
+.pill-morado{background:var(--morado-soft);color:var(--morado-d)} .pill-teal{background:var(--teal-soft);color:var(--teal)} .pill-crimson{background:var(--crimson-soft);color:var(--crimson)}
+.tag-art{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-size:.72rem;font-weight:700;color:var(--azul-d);background:var(--azul-soft);padding:.12rem .45rem;border-radius:6px;white-space:nowrap}
+
+/* KPIs */
+.kpi{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.15rem;box-shadow:var(--shadow-sm);text-align:left}
+.kpi .num{font-size:clamp(2rem,4vw,2.9rem);font-weight:900;line-height:1;letter-spacing:-1px;color:var(--azul-d)}
+.kpi .num.n{color:var(--naranja-d)} .kpi .num.m{color:var(--morado-d)} .kpi .num.t{color:var(--teal)} .kpi .num.c{color:var(--crimson)}
+.kpi .lbl{font-size:.8rem;color:var(--muted);margin-top:.45rem;font-weight:600}
+
+/* tablas */
+.table-wrap{border:1px solid var(--line);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow-sm);background:var(--white)}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{background:var(--ink);color:#fff;text-align:left;padding:.7rem .85rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;font-weight:700;position:sticky;top:0}
+td{padding:.6rem .85rem;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+tbody tr:nth-child(even){background:var(--paper)}
+tbody tr:hover td{background:var(--azul-soft);color:var(--ink)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+caption,.src{font-size:.72rem;color:var(--muted);margin-top:.5rem;text-align:left;font-style:italic}
+
+/* línea de tiempo horizontal */
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-top:.5rem}
+@media(max-width:860px){.timeline{grid-template-columns:repeat(2,1fr)}}
+.tl{background:var(--white);border:1px solid var(--line);border-left:5px solid var(--naranja);border-radius:var(--radius-sm);padding:.95rem 1rem;box-shadow:var(--shadow-sm)}
+.tl.b{border-left-color:var(--azul)} .tl.m{border-left-color:var(--morado)} .tl.c{border-left-color:var(--crimson)}
+.tl .d{font-size:1.5rem;font-weight:900;color:var(--naranja-d);line-height:1}
+.tl.b .d{color:var(--azul-d)} .tl.m .d{color:var(--morado-d)} .tl.c .d{color:var(--crimson)}
+.tl .d small{font-size:.8rem;font-weight:700}
+.tl .t{font-size:.84rem;font-weight:700;margin:.3rem 0 .15rem}
+.tl .s{font-size:.76rem;color:var(--muted)}
+
+/* flujo / escalera */
+.flow{display:flex;flex-direction:column;gap:.7rem}
+.flow-step{display:grid;grid-template-columns:48px 1fr;gap:1rem;align-items:start;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-sm);padding:1rem 1.1rem;box-shadow:var(--shadow-sm);position:relative}
+.flow-step .n{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-weight:900;color:#fff;background:var(--azul);font-size:1.1rem}
+.flow-step:nth-child(2) .n{background:var(--naranja)} .flow-step:nth-child(3) .n{background:var(--morado)}
+.flow-step h4{font-size:1rem;font-weight:800;margin-bottom:.2rem}
+.flow-step p{font-size:.86rem;color:var(--ink-soft)}
+.flow-step .note{display:inline-block;margin-top:.4rem;font-size:.72rem;color:var(--muted);font-style:italic}
+
+/* dos columnas comparativas */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(max-width:860px){.vs{grid-template-columns:1fr}}
+.vs-col{border-radius:var(--radius);padding:1.3rem;border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+.vs-col.restr{background:var(--naranja-soft);border-color:#f6d3b0}
+.vs-col.canc{background:var(--crimson-soft);border-color:#f0c3cc}
+.vs-col h3{font-size:1.1rem;font-weight:800;margin-bottom:.6rem}
+
+/* gráficas */
+.chart-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem 1.4rem 1rem;box-shadow:var(--shadow-sm)}
+.chart-card h3{font-size:1rem;font-weight:800;margin-bottom:.15rem}
+.chart-card .sub{font-size:.8rem;color:var(--muted);margin-bottom:.8rem}
+.legend{display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:.6rem;font-size:.78rem;color:var(--ink-soft);font-weight:600}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.svg-chart{width:100%;height:auto;display:block;max-height:30vh;margin:0 auto}
+.svg-chart text{font-family:var(--sans)}
+
+/* callout / cita */
+.callout{background:linear-gradient(120deg,var(--ink),#13314f);color:#fff;border-radius:var(--radius);padding:1.5rem 1.7rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.callout::before{content:"\201C";position:absolute;top:-1.2rem;right:1rem;font-size:7rem;opacity:.12;font-family:Georgia,serif}
+.callout p{font-size:1.05rem;line-height:1.5;position:relative}
+.callout .by{margin-top:.7rem;font-size:.8rem;color:#9ec3ef;font-weight:600}
+
+/* portada */
+.cover{height:100%;display:flex;flex-direction:column;justify-content:center;position:relative}
+.cover__bg{position:absolute;inset:0;background:
+  radial-gradient(circle at 85% 15%,rgba(109,40,217,.12),transparent 45%),
+  radial-gradient(circle at 10% 90%,rgba(22,103,214,.12),transparent 45%);
+  pointer-events:none}
+.cover .eyebrow{font-size:.8rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--azul);margin-bottom:1rem}
+.cover h1{font-size:clamp(2rem,5.5vw,4rem);font-weight:900;line-height:1.02;letter-spacing:-1.5px;margin-bottom:1rem;max-width:18ch}
+.cover h1 .hl{background:linear-gradient(90deg,var(--azul),var(--morado));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.cover .sub{font-size:clamp(1rem,1.6vw,1.25rem);color:var(--ink-soft);max-width:60ch;margin-bottom:2rem}
+.cover .meta{display:flex;gap:2.2rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.3rem}
+.cover .meta div{font-size:.85rem}
+.cover .meta .mlbl{color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-size:.68rem;font-weight:700;margin-bottom:.2rem}
+.cover .meta .mval{font-weight:700;color:var(--ink)}
+
+/* agenda */
+.agenda{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+@media(max-width:1000px){.agenda{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.agenda{grid-template-columns:1fr}}
+.agenda a{display:flex;gap:.8rem;align-items:center;padding:.68rem .85rem;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-sm);text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:var(--shadow-sm);cursor:pointer}
+.agenda a:hover{border-color:var(--azul);transform:translateX(4px)}
+.agenda .an{font-weight:900;color:var(--azul);font-size:1.1rem;min-width:1.6rem;font-variant-numeric:tabular-nums}
+.agenda .at{font-weight:700;font-size:.92rem}
+.agenda .as{font-size:.76rem;color:var(--muted)}
+
+.note-box{background:var(--azul-soft);border:1px solid #c9ddf9;border-radius:var(--radius-sm);padding:.8rem 1rem;font-size:.82rem;color:var(--azul-d);margin-top:1rem}
+.note-box.m{background:var(--morado-soft);border-color:#ddcdf7;color:var(--morado-d)}
+.note-box strong{font-weight:800}
+
+.hint{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.5rem .9rem;border-radius:999px;font-size:.76rem;z-index:50;opacity:.9;transition:opacity .5s}
+.hint.hide{opacity:0;pointer-events:none}
+
+@media print{
+  body{overflow:visible;height:auto}
+  .deck{position:static}.nav,.progress,.hint{display:none}
+  .stage{overflow:visible;height:auto}
+  .slide{position:static;opacity:1;visibility:visible;transform:none;page-break-after:always;min-height:95vh;border-bottom:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+<div class="deck">
+  <div class="progress"><div class="progress__bar" id="pbar"></div></div>
+
+  <div class="stage" id="stage">
+
+    <!-- ============ 1 · PORTADA ============ -->
+    <section class="slide active" data-title="Portada">
+      <div class="cover">
+        <div class="cover__bg"></div>
+        <div class="slide__inner" style="justify-content:center">
+          <div class="eyebrow">SAT · Ejercicio Fiscal 2026 — 2027</div>
+          <h1>Plan Maestro de Fiscalización y la <span class="hl">Reforma Fiscal 2026</span></h1>
+          <p class="sub">Guía ejecutiva para contadores públicos y despachos: cómo opera la fiscalización digitalizada e inteligente del SAT y cómo blindar la operación fiscal de las empresas.</p>
+          <div class="meta">
+            <div><div class="mlbl">Documento</div><div class="mval">Guía Ejecutiva / Deck</div></div>
+            <div><div class="mlbl">Fecha</div><div class="mval">28/octubre/2026</div></div>
+            <div><div class="mlbl">Marco</div><div class="mval">Plan Maestro + Tendencias SAT 2026</div></div>
+            <div><div class="mlbl">Fuente base</div><div class="mval">Dr. Jorge Briones Gómez · AMCP</div></div>
+            <div><div class="mlbl">Crédito</div><div class="mval">© OCT 2026 IGM</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2 · AGENDA ============ -->
+    <section class="slide" data-title="Agenda">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="kicker">Contenido</div>
+          <h2 class="title">Qué cubre esta guía</h2>
+          <p class="lead">De la estrategia institucional del SAT al blindaje práctico del despacho, en tres bloques: <strong>cómo fiscaliza</strong>, <strong>qué castiga</strong> y <strong>qué hacer</strong>.</p>
+        </div>
+        <div class="agenda" id="agenda"></div>
+      </div>
+    </section>
+
+    <!-- ============ 3 · MARCO ESTRATÉGICO ============ -->
+    <section class="slide" data-title="Marco estratégico">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">01 · Cómo fiscaliza</div>
+          <div class="kicker">Marco estratégico</div>
+          <h2 class="title">Los ejes rectores del SAT</h2>
+          <p class="lead">El esquema de fiscalización se articula en cuatro objetivos estratégicos y se sostiene sobre tres pilares operativos: objetividad, combate a lo apócrifo e inteligencia de datos.</p>
+        </div>
+        <div class="grid g4" style="margin-bottom:1.1rem">
+          <div class="kpi"><div class="num">01</div><div class="lbl">Aumentar la eficiencia recaudatoria</div></div>
+          <div class="kpi"><div class="num n">02</div><div class="lbl">Disminuir la evasión y elusión fiscal</div></div>
+          <div class="kpi"><div class="num m">03</div><div class="lbl">Combatir la corrupción</div></div>
+          <div class="kpi"><div class="num t">04</div><div class="lbl">Brindar la mejor atención al contribuyente</div></div>
+        </div>
+        <div class="grid g3">
+          <div class="card card--accent"><h3><span class="ico">⚖️</span>Objetividad y homogeneidad</h3><p>Criterios de auditoría unificados en todo el país. <strong>No se fiscaliza al contribuyente cumplido:</strong> las revisiones se enfocan en conductas de riesgo.</p></div>
+          <div class="card card--naranja"><h3><span class="ico n">🚫</span>Combate a lo apócrifo</h3><p>Desarticulación de esquemas EFOS/EDOS con medidas cautelares inmediatas, cierre de RFC, acción penal y autocorrección obligatoria.</p></div>
+          <div class="card card--morado"><h3><span class="ico m">🧠</span>Inteligencia de datos</h3><p>Modelos predictivos (Big Data, Machine Learning, redes neuronales) para perfilar riesgo y automatizar el acercamiento preventivo.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4 · CONDUCTAS EN LA MIRA ============ -->
+    <section class="slide" data-title="Conductas en la mira">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">01 · Cómo fiscaliza</div>
+          <div class="kicker k-naranja">Programación de auditorías</div>
+          <h2 class="title">Conductas que ponen a un contribuyente bajo la lupa</h2>
+          <p class="lead">Las revisiones se programan prioritariamente para quienes incurren en estas conductas de riesgo.</p>
+        </div>
+        <div class="grid g2">
+          <div class="card card--naranja"><h3><span class="ico n">🧾</span>Esquemas apócrifos y simulación</h3><ul class="ticks n"><li>Operaciones con empresas factureras o nomineras</li><li>Simulación o aplicación ilegal de deducciones</li><li>Ingresos no declarados</li></ul></div>
+          <div class="card card--naranja"><h3><span class="ico n">📉</span>Resultados fiscales incongruentes</h3><ul class="ticks n"><li>Pérdidas fiscales recurrentes</li><li>Tasa efectiva de impuesto inferior al promedio del sector</li><li>Abuso de estímulos fiscales</li></ul></div>
+          <div class="card card--naranja"><h3><span class="ico n">🚢</span>Anomalías de comercio exterior</h3><ul class="ticks n"><li>Importaciones por debajo del valor de mercado</li><li>Incumplimiento de regulaciones no arancelarias</li><li>Inconsistencias entre volumen de compras/importaciones y ventas</li></ul></div>
+          <div class="card card--naranja"><h3><span class="ico n">💸</span>Devoluciones y retenciones</h3><ul class="ticks n"><li>Solicitud de devoluciones improcedentes</li><li>Omisión de retenciones de trabajadores</li><li>Operaciones vía paraísos fiscales</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5 · CRITERIOS UNIFICADOS ============ -->
+    <section class="slide" data-title="Criterios unificados">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">01 · Cómo fiscaliza</div>
+          <div class="kicker">Certeza jurídica</div>
+          <h2 class="title">Partidas con criterio único nacional</h2>
+          <p class="lead">Para garantizar consistencia, el SAT aplica los mismos criterios y procedimientos en todas sus oficinas sobre estas partidas sensibles.</p>
+        </div>
+        <div class="grid g4">
+          <div class="card card--accent"><h3 style="font-size:.95rem">Descuentos comerciales</h3></div>
+          <div class="card card--accent"><h3 style="font-size:.95rem">Depósitos no identificados</h3></div>
+          <div class="card card--accent"><h3 style="font-size:.95rem">Materialidad de operaciones</h3></div>
+          <div class="card card--accent"><h3 style="font-size:.95rem">Gastos de mercadotecnia</h3></div>
+          <div class="card card--accent"><h3 style="font-size:.95rem">Procedimientos de importación</h3></div>
+          <div class="card card--accent"><h3 style="font-size:.95rem">Regulaciones no arancelarias</h3></div>
+          <div class="card card--accent"><h3 style="font-size:.95rem">Permisos y certificaciones</h3></div>
+          <div class="card card--accent"><h3 style="font-size:.95rem">Autorizaciones de comercio exterior</h3></div>
+        </div>
+        <div class="note-box"><strong>Lectura para el despacho:</strong> cualquiera de estas partidas en los papeles de trabajo debe estar documentada y conciliada con el mismo rigor, sin importar la administración desconcentrada que revise.</div>
+      </div>
+    </section>
+
+    <!-- ============ 6 · FISCALIZACIÓN INTELIGENTE ============ -->
+    <section class="slide" data-title="Fiscalización inteligente">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">01 · Cómo fiscaliza</div>
+          <div class="kicker k-morado">Transformación tecnológica</div>
+          <h2 class="title">Fiscalización inteligente: el arsenal analítico</h2>
+          <p class="lead">El SAT cruza masivamente la información para identificar patrones, generar alertas automáticas y determinar el nivel de riesgo impositivo de cada contribuyente.</p>
+        </div>
+        <div class="grid g3">
+          <div class="card card--morado"><h3><span class="ico m">⛏️</span>Minería de datos</h3><p>Técnicas estadísticas y de IA que exploran grandes repositorios para hallar patrones, tendencias y reglas de comportamiento fiscal.</p></div>
+          <div class="card card--morado"><h3><span class="ico m">🔬</span>Ciencia de datos</h3><p>Enfoque multidisciplinario que responde: qué pasó, por qué pasó, qué pasará y qué acciones tomar.</p></div>
+          <div class="card card--morado"><h3><span class="ico m">📡</span>IoT</h3><p>Red de dispositivos y sensores que capturan datos en tiempo real y los transfieren a la nube.</p></div>
+          <div class="card card--morado"><h3><span class="ico m">🗄️</span>Big Data</h3><p>Procesamiento bajo las "tres V": Volumen, Variedad y Velocidad de los datos.</p></div>
+          <div class="card card--morado"><h3><span class="ico m">🤖</span>Machine Learning</h3><p>Algoritmos que aprenden de datos históricos sin instrucciones explícitas y afinan la precisión de las alertas.</p></div>
+          <div class="card card--morado"><h3><span class="ico m">🧠</span>IA y redes neuronales</h3><p>Sistemas de autoaprendizaje y aprendizaje profundo en capas de nodos para tareas complejas de alta precisión.</p></div>
+        </div>
+        <div class="note-box m"><strong>Implicación:</strong> el modelo se alimenta de tus CFDI, contabilidad electrónica, declaraciones, información de terceros y fuentes externas. Toda inconsistencia es detectable y, cada vez más, automática.</div>
+      </div>
+    </section>
+
+    <!-- ============ 7 · MÁQUINA RECAUDATORIA ============ -->
+    <section class="slide" data-title="La máquina recaudatoria">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">01 · Cómo fiscaliza</div>
+          <div class="kicker">Datos abiertos del SAT</div>
+          <h2 class="title">La máquina recaudatoria, en números</h2>
+        </div>
+        <div class="grid g4" style="margin-bottom:.9rem">
+          <div class="kpi"><div class="num">~88.6 M</div><div class="lbl">Contribuyentes activos en el RFC (ago. 2026)</div></div>
+          <div class="kpi"><div class="num t">$0.25</div><div class="lbl">Costo de recaudar por cada $100 que ingresan</div></div>
+          <div class="kpi"><div class="num n">$248</div><div class="lbl">Recuperados por cada peso invertido en fiscalización (2025)</div></div>
+          <div class="kpi"><div class="num m">9 de 10</div><div class="lbl">Empresas no pagan ISR o con tasa efectiva muy reducida</div></div>
+        </div>
+        <div class="chart-card">
+          <h3>Recaudación de ingresos tributarios por impuesto</h3>
+          <div class="sub">Millones de pesos · años completos 2024 y 2025</div>
+          <div id="chartRecaud"></div>
+          <div class="legend"><span><i style="background:var(--azul)"></i>2024</span><span><i style="background:var(--morado)"></i>2025</span></div>
+          <div class="src">Fuente: elaboración con datos de la información estadística del SAT. Cifras 2026 preliminares a agosto, no comparables en año completo.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 8 · VIGILANCIA PROFUNDA (GRÁFICA) ============ -->
+    <section class="slide" data-title="Explosión de la Vigilancia Profunda">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">01 · Cómo fiscaliza</div>
+          <div class="kicker k-naranja">Tendencia clave</div>
+          <h2 class="title">La explosión de la Vigilancia Profunda</h2>
+          <p class="lead">El acercamiento preventivo y no vinculante es hoy el motor del SAT: los actos de Vigilancia Profunda se multiplicaron más de 100 veces en una década.</p>
+        </div>
+        <div class="grid g2" style="align-items:stretch">
+          <div class="chart-card">
+            <h3>Número de actos de Vigilancia Profunda</h3>
+            <div class="sub">Millones de actos · 2015 – 2025 (años completos)</div>
+            <div id="chartVP"></div>
+            <div class="src">2026 preliminar a agosto: 13.0 M de actos. Fuente: datos estadísticos del SAT.</div>
+          </div>
+          <div class="chart-card">
+            <h3>Recaudación por vigilancia de obligaciones</h3>
+            <div class="sub">Miles de millones de pesos · 2019 – 2025</div>
+            <div id="chartRecVO"></div>
+            <div class="legend"><span><i style="background:var(--azul)"></i>Total vigilancia</span><span><i style="background:var(--naranja)"></i>Vigilancia Profunda</span></div>
+          </div>
+        </div>
+        <div class="note-box"><strong>Para el contador:</strong> antes de cualquier facultad de comprobación, el SAT ya "conversó" con el contribuyente por buzón, correo y entrevista. Responder a tiempo evita el escalamiento.</div>
+      </div>
+    </section>
+
+    <!-- ============ 9 · EFOS / EDOS ============ -->
+    <section class="slide" data-title="EFOS y EDOS">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">02 · Qué castiga</div>
+          <div class="kicker k-crimson">Art. 69-B CFF</div>
+          <h2 class="title">Combate a las facturas que amparan operaciones inexistentes</h2>
+          <p class="lead">Cuando un emisor factura sin activos, personal, infraestructura o capacidad material, se presume la inexistencia de la operación.</p>
+        </div>
+        <div class="vs" style="margin-bottom:1.1rem">
+          <div class="card card--crimson"><h3><span class="pill pill-crimson">EFOS</span> Emisor / facturero</h3><ul class="ticks c"><li>Visita domiciliaria específica y suspensión inmediata de operación</li><li>Denuncia penal ante el MP bajo el nuevo tipo penal</li><li>Negativa de inscripción al RFC a nuevas sociedades con socios reincidentes</li></ul></div>
+          <div class="card card--naranja"><h3><span class="pill pill-naranja">EDOS</span> Receptor / comprador</h3><ul class="ticks n"><li><strong>30 días</strong> naturales para acreditar la materialidad o corregir</li><li>Declaraciones complementarias que correspondan</li><li>De no hacerlo: restricción temporal del CSD</li></ul></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Etapa Art. 69-B</th><th>Plazo</th><th>Vía</th></tr></thead>
+            <tbody>
+              <tr><td>Manifestar y aportar pruebas tras la presunción</td><td>15 días</td><td>Buzón Tributario / portal SAT / DOF</td></tr>
+              <tr><td>Prórroga (por única ocasión)</td><td>+5 días</td><td>Buzón Tributario</td></tr>
+              <tr><td>Resolución del SAT (so pena de quedar sin efectos la presunción)</td><td>Hasta 50 días</td><td>Buzón Tributario</td></tr>
+              <tr><td>Publicación de quienes desvirtuaron</td><td>Trimestral</td><td>DOF y portal SAT</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 10 · REFORMA 2026 CFDI FALSOS ============ -->
+    <section class="slide" data-title="Reforma 2026 · CFDI falsos">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">02 · Qué castiga</div>
+          <div class="kicker k-crimson">Reforma Fiscal 2026</div>
+          <h2 class="title">Nuevo requisito: el CFDI debe amparar operaciones reales</h2>
+          <p class="lead">La reforma endurece el tratamiento de los comprobantes: si no amparan actos jurídicos reales, la ley los considera <strong>falsos</strong>.</p>
+        </div>
+        <div class="grid g2" style="margin-bottom:1rem">
+          <div class="card card--crimson"><h3><span class="tag-art">Art. 29-A, IX</span></h3><p>Los CFDI deben amparar operaciones existentes, verdaderas o actos jurídicos reales. Los que no cumplan se consideran <strong>falsos</strong> para efectos del Código.</p></div>
+          <div class="card card--crimson"><h3><span class="tag-art">Art. 29-A Bis</span></h3><p>La autoridad puede determinar la falsedad durante cualquier facultad de comprobación, <strong>sin agotar previamente</strong> el procedimiento del 49 Bis.</p></div>
+          <div class="card card--accent"><h3><span class="tag-art">Art. 42, V, g)</span></h3><p>Faculta a verificar que los CFDI amparen operaciones reales cuando se presuma incumplimiento del 29-A, IX.</p></div>
+          <div class="card card--naranja"><h3><span class="tag-art">Art. 49 Bis</span></h3><p>Visita domiciliaria específica por presunción de CFDI falsos, con suspensión de emisión desde la notificación de la orden.</p></div>
+        </div>
+        <div class="note-box m"><strong>Procedimiento de visita (Art. 49 Bis):</strong> concluye en un máximo de <strong>24 días hábiles</strong>. El contribuyente tiene <strong>5 días</strong> para aportar pruebas; de no desvirtuar, los CFDI se consideran falsos, se cancela el CSD (Art. 17-H) y la SHCP procede penalmente (Art. 113 Bis).</div>
+      </div>
+    </section>
+
+    <!-- ============ 11 · LÍNEA DE TIEMPO DE PLAZOS ============ -->
+    <section class="slide" data-title="Plazos críticos">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">02 · Qué castiga</div>
+          <div class="kicker k-naranja">Mapa de plazos</div>
+          <h2 class="title">Los relojes que no se pueden perder</h2>
+          <p class="lead">La defensa fiscal se gana o se pierde en los plazos. Estos son los que el despacho debe monitorear a diario.</p>
+        </div>
+        <div class="timeline" style="margin-bottom:.9rem">
+          <div class="tl b"><div class="d">3 <small>días</small></div><div class="t">Buzón Tributario</div><div class="s">Para abrir la notificación; al 4.º día surte efectos (Art. 17-K).</div></div>
+          <div class="tl"><div class="d">5 <small>días</small></div><div class="t">Pruebas en visita</div><div class="s">Para desvirtuar la presunción de CFDI falsos (Art. 49 Bis).</div></div>
+          <div class="tl m"><div class="d">10 <small>días</small></div><div class="t">Vigilancia Profunda</div><div class="s">Para aclarar o corregir antes del escalamiento.</div></div>
+          <div class="tl"><div class="d">15 <small>días</small></div><div class="t">Art. 69-B</div><div class="s">Para manifestar y aportar pruebas (+5 de prórroga).</div></div>
+        </div>
+        <div class="timeline">
+          <div class="tl"><div class="d">24 <small>días</small></div><div class="t">Visita 49 Bis</div><div class="s">Duración máxima del procedimiento (hábiles).</div></div>
+          <div class="tl c"><div class="d">30 <small>días</small></div><div class="t">EDOS</div><div class="s">Receptores: acreditar materialidad o corregir, o se restringe el CSD.</div></div>
+          <div class="tl b"><div class="d">45 <small>días</small></div><div class="t">Publicación</div><div class="s">Nombre y RFC del emisor de CFDI falsos en DOF/portal.</div></div>
+          <div class="tl m"><div class="d">50 <small>días</small></div><div class="t">Resolución SAT</div><div class="s">Plazo máximo en el 69-B; fuera de él, decae la presunción.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 12 · CSD RESTRICCIÓN vs CANCELACIÓN ============ -->
+    <section class="slide" data-title="CSD: restricción vs cancelación">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">02 · Qué castiga</div>
+          <div class="kicker k-crimson">Certificado de Sello Digital</div>
+          <h2 class="title">Restricción temporal vs. cancelación definitiva del CSD</h2>
+          <p class="lead">La diferencia es existencial para una empresa: poder volver a facturar, o no.</p>
+        </div>
+        <div class="vs" style="margin-bottom:1rem">
+          <div class="vs-col restr">
+            <h3><span class="pill pill-naranja">Reversible</span> Restricción temporal</h3>
+            <p style="font-size:.9rem;color:var(--ink-soft)"><span class="tag-art">Art. 17-H Bis</span> El uso del CSD se "bloquea" temporalmente. Existe posibilidad de recuperarlo: si el contribuyente aclara, desvirtúa o regulariza, la autoridad retira el bloqueo.</p>
+          </div>
+          <div class="vs-col canc">
+            <h3><span class="pill pill-crimson">Irreversible</span> Cancelación definitiva</h3>
+            <p style="font-size:.9rem;color:var(--ink-soft)"><span class="tag-art">Art. 17-H</span> El CSD se deja sin efectos de forma definitiva. No hay recuperación: el contribuyente debe tramitar un <strong>nuevo CSD</strong> para volver a facturar.</p>
+          </div>
+        </div>
+        <div class="card card--accent"><h3><span class="ico">🛡️</span>Medios de defensa</h3><ul class="ticks"><li>Aclaración conforme al CFF y RCG (Ficha de trámite 43/CFF, Anexo 2 RMF 2026)</li><li>Recurso de revocación (Ficha de trámite 42/CFF)</li><li>Juicio de nulidad</li></ul></div>
+      </div>
+    </section>
+
+    <!-- ============ 13 · ESCALERA DE FISCALIZACIÓN ============ -->
+    <section class="slide" data-title="Escalera de fiscalización">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">02 · Qué castiga</div>
+          <div class="kicker">Secuencia de apremio</div>
+          <h2 class="title">La escalera: del recordatorio a la cancelación</h2>
+          <p class="lead">El SAT agota medidas persuasivas antes de afectar el CSD o iniciar facultades de comprobación. Cada peldaño es una oportunidad de corregir.</p>
+        </div>
+        <div class="flow">
+          <div class="flow-step"><div class="n">1</div><div><h4>Cartas invitación</h4><p>Exhortos, recordatorios de pago, propuestas o declaraciones prellenadas y avisos de inconsistencias.<span class="note">No implica el ejercicio de facultades de comprobación.</span></p></div></div>
+          <div class="flow-step"><div class="n">2</div><div><h4>Vigilancia Profunda</h4><p>Oficio por buzón y entrevistas (virtuales o presenciales) donde el SAT expone omisiones y diferencias. Orientación para corregir en <strong>10 días</strong>.<span class="note">Tampoco implica facultades de comprobación.</span></p></div></div>
+          <div class="flow-step"><div class="n">3</div><div><h4>Medidas de apremio</h4><p>Bloqueo temporal del CSD (17-H Bis). Si se aclara → se retira. Si <strong>no</strong> se aclara → cancelación del CSD (17-H) e inicio de facultades.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 14 · HERRAMIENTAS DE LA AUTORIDAD ============ -->
+    <section class="slide" data-title="Herramientas de la autoridad">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">02 · Qué castiga</div>
+          <div class="kicker k-teal">Insumos de fiscalización</div>
+          <h2 class="title">Con qué información cuenta la autoridad</h2>
+          <p class="lead">Todo converge en los cruces de información potenciados con IA. Lo que para el contribuyente son obligaciones, para el SAT son fuentes de datos.</p>
+        </div>
+        <div class="grid g3">
+          <div class="card card--teal"><h3><span class="ico t">🧾</span>CFDI</h3><p>Emitidos y recibidos, complementos, nuevo esquema de cancelación (Arts. 29 y 29-A).</p></div>
+          <div class="card card--teal"><h3><span class="ico t">📚</span>Contabilidad electrónica</h3><p>Catálogo de cuentas y balanza de comprobación mensual y anual (Art. 28).</p></div>
+          <div class="card card--teal"><h3><span class="ico t">📬</span>Buzón Tributario</h3><p>Notificaciones, promociones, requerimientos y mensajes de interés (Art. 17-K).</p></div>
+          <div class="card card--teal"><h3><span class="ico t">📊</span>Declaraciones</h3><p>Provisionales, definitivas, informativas y anuales; normales y complementarias.</p></div>
+          <div class="card card--teal"><h3><span class="ico t">🔗</span>Información de terceros</h3><p>Dictamen fiscal, fuentes externas y declaraciones informativas.</p></div>
+          <div class="card card--morado"><h3><span class="ico m">⚡</span>Cruces con IA</h3><p>Correlación masiva de todo lo anterior para detectar inconsistencias automáticamente.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 15 · HORIZONTE 2027 ============ -->
+    <section class="slide" data-title="Horizonte 2027">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">03 · Qué viene</div>
+          <div class="kicker k-morado">Criterios de Política Económica 2027</div>
+          <h2 class="title">Horizonte 2027: más recaudación sin nuevos impuestos</h2>
+          <p class="lead">La estrategia: aumentar la recaudación mediante el combate a delitos fiscales, la facilitación del cumplimiento voluntario y ajustes al marco tributario — <strong>sin crear nuevos impuestos ni subir las tasas generales.</strong></p>
+        </div>
+        <div class="grid g2" style="margin-bottom:1rem">
+          <div class="card card--morado"><h3><span class="ico m">🏛️</span>Fortalecer la base gravable</h3><ul class="ticks m"><li>Estandarización de deducciones para empresas</li><li>Deducción de intereses netos</li><li>CUFIN y cuenta de capital de aportación</li><li>Régimen opcional para grupos de sociedades (ROGS)</li></ul></div>
+          <div class="card card--accent"><h3><span class="ico">🌱</span>Crecimiento y desarrollo</h3><ul class="ticks"><li>Simplificación para micro y pequeñas empresas</li><li>Repatriación de capitales</li><li>Tasa 0% de IVA a libros, periódicos y revistas</li><li>Ofertas públicas iniciales</li></ul></div>
+        </div>
+        <div class="callout">
+          <p>El uso de deducciones y pérdidas fiscales permite hoy que <strong>9 de cada 10 empresas</strong> no paguen ISR o lo hagan a tasas efectivas muy reducidas — equivalentes a lo que paga una persona física del RESICO.</p>
+          <div class="by">— Exposición de motivos, iniciativa de reforma a la LISR 2027</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 16 · BLINDAJE: 17 ACCIONES ============ -->
+    <section class="slide" data-title="Blindaje del contador">
+      <div class="slide__inner">
+        <div class="section-head">
+          <div class="eyebrow-num">03 · Qué hacer</div>
+          <div class="kicker k-teal">Checklist del despacho</div>
+          <h2 class="title">Blindaje: el plan de acción del contador</h2>
+          <p class="lead">Acciones de control para minimizar cartas invitación, vigilancia profunda y el riesgo de restricción o cancelación del CSD.</p>
+        </div>
+        <div class="grid g2">
+          <div class="card card--teal"><h3><span class="ico t">🔄</span>Amarres y conciliaciones</h3><ul class="ticks t"><li>CFDI de ingresos vs. pagos provisionales de ISR e IVA</li><li>CFDI recibidos por erogaciones vs. declaración anual</li><li>CFDI de ingresos/nómina vs. visores del SAT</li><li>Determinar bases con la lógica de las declaraciones prellenadas</li></ul></div>
+          <div class="card card--teal"><h3><span class="ico t">👥</span>Nómina e IMSS</h3><ul class="ticks t"><li>Trabajadores y percepciones: CFDI de nómina vs. declarado</li><li>Cruce contra SUA y contra EMA/EBA en IDSE</li><li>Retenciones de ISR a trabajadores vs. pagadas al SAT</li><li>Impuestos locales (nóminas/hospedaje) conciliados</li></ul></div>
+          <div class="card card--accent"><h3><span class="ico">🔍</span>Monitoreo del CFDI</h3><ul class="ticks"><li>Verificar que lo cancelado "internamente" lo esté en el portal</li><li>Detectar duplicidades, errores y falta de requisitos</li><li>Vigilar cancelaciones de proveedores sin autorización</li><li>Método de pago correcto: PUE vs. PPD</li></ul></div>
+          <div class="card card--naranja"><h3><span class="ico n">⚠️</span>Listas negras y buzón</h3><ul class="ticks n"><li>Depurar proveedores contra el Art. 69-B (posibles EFOS)</li><li>Revisar el Buzón Tributario a diario (plazo de 3 días)</li><li>Atender líneas de captura vencidas de inmediato</li><li>Conciliar retenciones de ISR e IVA a terceros</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 17 · CIERRE / FUENTE ============ -->
+    <section class="slide" data-title="Cierre">
+      <div class="slide__inner">
+        <div class="cover">
+          <div class="cover__bg"></div>
+          <div style="position:relative">
+            <div class="kicker">Síntesis</div>
+            <h2 class="title" style="max-width:20ch">La fiscalización ya no reacciona: anticipa</h2>
+            <p class="lead">El SAT opera un modelo preventivo, objetivo y basado en datos. Para el despacho, la defensa empieza antes de la auditoría: en la conciliación continua, el monitoreo del buzón y la materialidad documentada.</p>
+            <div class="grid g3" style="margin:1.4rem 0">
+              <div class="kpi"><div class="num">Concilia</div><div class="lbl">CFDI, declaraciones y nómina, de forma continua</div></div>
+              <div class="kpi"><div class="num n">Responde</div><div class="lbl">Buzón y plazos: 3, 5, 10, 15, 30 días</div></div>
+              <div class="kpi"><div class="num m">Documenta</div><div class="lbl">Materialidad real de cada operación</div></div>
+            </div>
+            <div class="card" style="border-top:4px solid var(--azul)">
+              <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:.3rem">Fuente base del contenido</div>
+              <div style="font-weight:800;font-size:1rem">Tendencias de Fiscalización del SAT 2026 · Plan Maestro 2026</div>
+              <div style="font-size:.86rem;color:var(--ink-soft);margin-top:.2rem">Dr. Jorge Briones Gómez — en el marco de la Asociación Mexicana de Contadores Públicos (AMCP). Material reorganizado y sintetizado con fines de guía ejecutiva.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav__brand"><span class="mark">SAT</span><span>Fiscalización 2026</span><span class="nav__credit">© OCT 2026 IGM</span></div>
+    <div class="nav__spacer"></div>
+    <button class="nav__btn" id="prev" aria-label="Anterior">‹</button>
+    <div class="nav__menu" id="dots"></div>
+    <span class="nav__count" id="count">1 / 17</span>
+    <button class="nav__btn" id="next" aria-label="Siguiente">›</button>
+  </nav>
+</div>
+
+<div class="hint" id="hint">Usa ← → o la barra espaciadora para navegar · F para pantalla completa</div>
+
+<script>
+(function(){
+  "use strict";
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var i = 0;
+  var dots = document.getElementById('dots');
+  var count = document.getElementById('count');
+  var pbar = document.getElementById('pbar');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var hint = document.getElementById('hint');
+  var agenda = document.getElementById('agenda');
+
+  var sections = [
+    {n:'01',t:'Marco estratégico del SAT',s:'Cuatro ejes y tres pilares',go:2},
+    {n:'02',t:'Conductas en la mira',s:'Qué dispara una auditoría',go:3},
+    {n:'03',t:'Criterios unificados',s:'Partidas con criterio único',go:4},
+    {n:'04',t:'Fiscalización inteligente',s:'El arsenal analítico del SAT',go:5},
+    {n:'05',t:'La máquina recaudatoria',s:'KPIs y recaudación',go:6},
+    {n:'06',t:'Vigilancia Profunda',s:'La tendencia que lo explica todo',go:7},
+    {n:'07',t:'EFOS y EDOS',s:'Combate a facturas falsas (69-B)',go:8},
+    {n:'08',t:'Reforma 2026 · CFDI falsos',s:'29-A IX, 29-A Bis, 49 Bis',go:9},
+    {n:'09',t:'Plazos críticos',s:'Los relojes de la defensa',go:10},
+    {n:'10',t:'CSD',s:'Restricción vs. cancelación',go:11},
+    {n:'11',t:'Escalera de fiscalización',s:'Del recordatorio a la cancelación',go:12},
+    {n:'12',t:'Herramientas de la autoridad',s:'Insumos y cruces con IA',go:13},
+    {n:'13',t:'Horizonte 2027',s:'Más recaudación, sin nuevos impuestos',go:14},
+    {n:'14',t:'Blindaje del contador',s:'Checklist del despacho',go:15}
+  ];
+  if(agenda){
+    agenda.innerHTML = sections.map(function(x){
+      return '<a data-go="'+x.go+'"><span class="an">'+x.n+'</span><span><span class="at">'+x.t+'</span><br><span class="as">'+x.s+'</span></span></a>';
+    }).join('');
+    Array.prototype.forEach.call(agenda.querySelectorAll('a'),function(a){
+      a.addEventListener('click',function(){ go(parseInt(a.getAttribute('data-go'),10)); });
+    });
+  }
+
+  // dots
+  for(var d=0; d<total; d++){
+    var b = document.createElement('button');
+    b.className='nav__dot'; b.setAttribute('data-i',d);
+    b.title = slides[d].getAttribute('data-title')||('Diapositiva '+(d+1));
+    b.addEventListener('click',(function(idx){return function(){go(idx);};})(d));
+    dots.appendChild(b);
+  }
+  var dotEls = Array.prototype.slice.call(dots.children);
+
+  function render(){
+    slides.forEach(function(s,idx){ s.classList.toggle('active', idx===i); });
+    dotEls.forEach(function(e,idx){ e.classList.toggle('on', idx===i); });
+    count.textContent = (i+1)+' / '+total;
+    pbar.style.width = ((i)/(total-1)*100)+'%';
+    prev.disabled = (i===0);
+    next.disabled = (i===total-1);
+    var act = slides[i].querySelector('.slide__inner')||slides[i];
+    act.scrollTop = 0; slides[i].scrollTop = 0;
+  }
+  function go(n){ i = Math.max(0, Math.min(total-1, n)); render(); }
+  function step(dir){ go(i+dir); }
+
+  prev.addEventListener('click',function(){step(-1);});
+  next.addEventListener('click',function(){step(1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();step(1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();step(-1);}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(total-1);}
+    else if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}else{document.exitFullscreen&&document.exitFullscreen();} }
+  });
+  // swipe
+  var sx=0;
+  document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});
+  document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>60){step(dx<0?1:-1);}},{passive:true});
+
+  setTimeout(function(){hint.classList.add('hide');},5200);
+
+  /* ============================================================
+     GRÁFICAS SVG (sin dependencias)
+     ============================================================ */
+  var NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs){var e=document.createElementNS(NS,tag);for(var k in attrs){e.setAttribute(k,attrs[k]);}return e;}
+  function fmt(n){return n.toLocaleString('es-MX');}
+
+  // --- Gráfica de barras agrupadas: recaudación por impuesto ---
+  function groupedBars(mount, cats, seriesA, seriesB, colA, colB){
+    var W=640,H=320, pad={l:56,r:16,t:16,b:52};
+    var iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+    var max=0; cats.forEach(function(_,k){max=Math.max(max,seriesA[k],seriesB[k]);});
+    max = Math.ceil(max/500000)*500000;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,class:'svg-chart','aria-label':'Gráfica de barras'});
+    // gridlines + y labels
+    var steps=5;
+    for(var g=0; g<=steps; g++){
+      var val=max/steps*g; var y=pad.t+ih-(val/max*ih);
+      svg.appendChild(el('line',{x1:pad.l,y1:y,x2:W-pad.r,y2:y,stroke:'#e2e8f0','stroke-width':1}));
+      var tl=el('text',{x:pad.l-8,y:y+4,'text-anchor':'end','font-size':10,fill:'#94a3b8'});
+      tl.textContent=(val/1000000).toFixed(1)+'M'; svg.appendChild(tl);
+    }
+    var bw=iw/cats.length, gap=bw*0.22, barw=(bw-gap*2)/2;
+    cats.forEach(function(c,k){
+      var x0=pad.l+bw*k+gap;
+      var ha=seriesA[k]/max*ih, hb=seriesB[k]/max*ih;
+      var ra=el('rect',{x:x0,y:pad.t+ih-ha,width:barw,height:ha,rx:4,fill:colA}); svg.appendChild(ra);
+      var rb=el('rect',{x:x0+barw,y:pad.t+ih-hb,width:barw,height:hb,rx:4,fill:colB}); svg.appendChild(rb);
+      var lbl=el('text',{x:pad.l+bw*k+bw/2,y:H-30,'text-anchor':'middle','font-size':11,fill:'#33465c','font-weight':700}); lbl.textContent=c; svg.appendChild(lbl);
+    });
+    mount.appendChild(svg);
+  }
+
+  // --- Área/línea: Vigilancia Profunda ---
+  function areaLine(mount, labels, data, color, unitDivisor, unitSuffix){
+    var W=560,H=300, pad={l:46,r:16,t:16,b:40};
+    var iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+    var max=Math.max.apply(null,data); max=Math.ceil(max/5000000)*5000000;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,class:'svg-chart','aria-label':'Gráfica de evolución'});
+    var steps=5;
+    for(var g=0; g<=steps; g++){
+      var val=max/steps*g; var y=pad.t+ih-(val/max*ih);
+      svg.appendChild(el('line',{x1:pad.l,y1:y,x2:W-pad.r,y2:y,stroke:'#e2e8f0','stroke-width':1}));
+      var tl=el('text',{x:pad.l-8,y:y+4,'text-anchor':'end','font-size':10,fill:'#94a3b8'});
+      tl.textContent=(val/unitDivisor).toFixed(0)+unitSuffix; svg.appendChild(tl);
+    }
+    var step=iw/(labels.length-1);
+    function X(k){return pad.l+step*k;} function Y(v){return pad.t+ih-(v/max*ih);}
+    var dPath='M'+X(0)+','+Y(data[0]); data.forEach(function(v,k){if(k>0)dPath+=' L'+X(k)+','+Y(v);});
+    var area=dPath+' L'+X(data.length-1)+','+(pad.t+ih)+' L'+X(0)+','+(pad.t+ih)+' Z';
+    var gradId='g'+Math.random().toString(36).slice(2,7);
+    var defs=el('defs',{}); var lg=el('linearGradient',{id:gradId,x1:0,y1:0,x2:0,y2:1});
+    lg.appendChild(el('stop',{offset:'0%','stop-color':color,'stop-opacity':.28}));
+    lg.appendChild(el('stop',{offset:'100%','stop-color':color,'stop-opacity':.02}));
+    defs.appendChild(lg); svg.appendChild(defs);
+    svg.appendChild(el('path',{d:area,fill:'url(#'+gradId+')'}));
+    svg.appendChild(el('path',{d:dPath,fill:'none',stroke:color,'stroke-width':2.5,'stroke-linejoin':'round'}));
+    data.forEach(function(v,k){
+      svg.appendChild(el('circle',{cx:X(k),cy:Y(v),r:3.2,fill:'#fff',stroke:color,'stroke-width':2}));
+      if(k===data.length-1){
+        var t=el('text',{x:X(k),y:Y(v)-10,'text-anchor':'end','font-size':11,fill:color,'font-weight':800});
+        t.textContent=(v/unitDivisor).toFixed(1)+unitSuffix; svg.appendChild(t);
+      }
+    });
+    labels.forEach(function(l,k){
+      if(k%2===0||k===labels.length-1){
+        var tx=el('text',{x:X(k),y:H-22,'text-anchor':'middle','font-size':10,fill:'#64748b'}); tx.textContent=l; svg.appendChild(tx);
+      }
+    });
+    mount.appendChild(svg);
+  }
+
+  // --- Doble línea: recaudación por vigilancia ---
+  function doubleLine(mount, labels, s1, s2, c1, c2){
+    var W=560,H=300, pad={l:50,r:16,t:16,b:40};
+    var iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+    var max=0;[s1,s2].forEach(function(s){s.forEach(function(v){max=Math.max(max,v);});});
+    max=Math.ceil(max/25000)*25000;
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,class:'svg-chart'});
+    var steps=5;
+    for(var g=0; g<=steps; g++){
+      var val=max/steps*g; var y=pad.t+ih-(val/max*ih);
+      svg.appendChild(el('line',{x1:pad.l,y1:y,x2:W-pad.r,y2:y,stroke:'#e2e8f0','stroke-width':1}));
+      var tl=el('text',{x:pad.l-8,y:y+4,'text-anchor':'end','font-size':10,fill:'#94a3b8'});
+      tl.textContent='$'+(val/1000).toFixed(0)+'k'; svg.appendChild(tl);
+    }
+    var step=iw/(labels.length-1);
+    function X(k){return pad.l+step*k;} function Y(v){return pad.t+ih-(v/max*ih);}
+    function draw(s,c){
+      var p='M'+X(0)+','+Y(s[0]); s.forEach(function(v,k){if(k>0)p+=' L'+X(k)+','+Y(v);});
+      svg.appendChild(el('path',{d:p,fill:'none',stroke:c,'stroke-width':2.5,'stroke-linejoin':'round'}));
+      s.forEach(function(v,k){svg.appendChild(el('circle',{cx:X(k),cy:Y(v),r:3,fill:'#fff',stroke:c,'stroke-width':2}));});
+    }
+    draw(s1,c1); draw(s2,c2);
+    labels.forEach(function(l,k){
+      var tx=el('text',{x:X(k),y:H-22,'text-anchor':'middle','font-size':10,fill:'#64748b'}); tx.textContent=l; svg.appendChild(tx);
+    });
+    mount.appendChild(svg);
+  }
+
+  // datos verificados de los MD
+  groupedBars(
+    document.getElementById('chartRecaud'),
+    ['ISR','IVA','IEPS','Import.'],
+    [2684495,1407983,628364,137822],
+    [2889032,1499451,671271,173619],
+    '#1667d6','#6d28d9'
+  );
+  areaLine(
+    document.getElementById('chartVP'),
+    ['2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],
+    [272155,320746,328365,366825,1066102,1697595,1132193,5780241,9792163,14260242,29348627],
+    '#e8731c', 1000000, 'M'
+  );
+  doubleLine(
+    document.getElementById('chartRecVO'),
+    ['2019','2020','2021','2022','2023','2024','2025'],
+    [64799,56079,63778,84900,130807,125458,154168],
+    [40966,28470,32684,65410,81922,100872,109289],
+    '#1667d6','#e8731c'
+  );
+
+  render();
+})();
+</script>
+</body>
+</html>
